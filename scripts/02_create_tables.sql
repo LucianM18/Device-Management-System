@@ -1,0 +1,31 @@
+﻿USE DeviceManagementDb;
+GO
+
+IF OBJECT_ID('dbo.Devices', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Devices
+    (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Name NVARCHAR(100) NOT NULL,
+        Manufacturer NVARCHAR(100) NOT NULL,
+        Type NVARCHAR(20) NOT NULL,
+        OperatingSystem NVARCHAR(50) NOT NULL,
+        OsVersion NVARCHAR(50) NOT NULL,
+        Processor NVARCHAR(100) NOT NULL,
+        RamAmount INT NOT NULL,
+        Description NVARCHAR(500) NULL
+    );
+END
+GO
+
+IF OBJECT_ID('dbo.Users', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Users
+    (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Name NVARCHAR(100) NOT NULL,
+        Role NVARCHAR(100) NOT NULL,
+        Location NVARCHAR(100) NOT NULL
+    );
+END
+GO

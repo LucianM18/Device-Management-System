@@ -1,0 +1,6 @@
+﻿appsettings.Development.json
+*.pfx
+*.key
+.vs/
+bin/
+obj/
