@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <InternalsVisibleTo>Marasescu_Lucian_Project_Task.Tests</InternalsVisibleTo>
   </PropertyGroup>
 
   <ItemGroup>
