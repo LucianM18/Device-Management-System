@@ -1,0 +1,53 @@
+<div class="detail-container">
+  <div *ngIf="loading" class="spinner-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <p *ngIf="error" class="error-message">{{ error }}</p>
+
+  <mat-card *ngIf="!loading && device">
+    <mat-card-header>
+      <mat-card-title>{{ device.name }}</mat-card-title>
+      <mat-card-subtitle>ID: {{ device.id }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-divider></mat-divider>
+
+      <div class="detail-grid">
+        <div class="detail-row">
+          <span class="label">Manufacturer</span>
+          <span>{{ device.manufacturer }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Type</span>
+          <span>{{ device.type }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Operating System</span>
+          <span>{{ device.operatingSystem }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">OS Version</span>
+          <span>{{ device.osVersion }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Processor</span>
+          <span>{{ device.processor }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">RAM (GB)</span>
+          <span>{{ device.ramAmount }}</span>
+        </div>
+        <div class="detail-row" *ngIf="device.description">
+          <span class="label">Description</span>
+          <span>{{ device.description }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button (click)="goBack()">Back to Devices</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

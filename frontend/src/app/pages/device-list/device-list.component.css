@@ -1,0 +1,23 @@
+.list-card {
+  max-width: 600px;
+  margin: 32px auto;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+}
+
+.device-item {
+  cursor: pointer;
+}
+
+.device-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
