@@ -5,6 +5,7 @@ namespace Marasescu_Lucian_Project_Task.Services;
 public interface IDeviceService
 {
     Task<IEnumerable<DeviceResponseDto>> GetAllAsync();
+    Task<IEnumerable<DeviceListItemDto>> GetAllWithCurrentUserAsync();
     Task<DeviceResponseDto?> GetByIdAsync(int id);
     Task<DeviceResponseDto> CreateAsync(DeviceCreateDto dto);
     Task<DeviceResponseDto?> UpdateAsync(int id, DeviceUpdateDto dto);

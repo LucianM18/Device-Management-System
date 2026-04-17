@@ -13,16 +13,41 @@ public class DeviceService : IDeviceService
         _repository = repository;
     }
 
+
     public async Task<IEnumerable<DeviceResponseDto>> GetAllAsync()
     {
         var devices = await _repository.GetAllAsync();
         return devices.Select(MapToResponseDto);
     }
 
+
+
     public async Task<DeviceResponseDto?> GetByIdAsync(int id)
     {
         var device = await _repository.GetByIdAsync(id);
         return device is null ? null : MapToResponseDto(device);
+    }
+
+    public async Task<IEnumerable<DeviceListItemDto>> GetAllWithCurrentUserAsync()
+    {
+        var devices = await _repository.GetAllWithCurrentUserAsync();
+
+        return devices.Select(device => new DeviceListItemDto
+        {
+            Id = device.Id,
+            Name = device.Name,
+            Manufacturer = device.Manufacturer,
+            Type = device.Type,
+            OperatingSystem = device.OperatingSystem,
+            OsVersion = device.OsVersion,
+            Processor = device.Processor,
+            RamAmount = device.RamAmount,
+            Description = device.Description,
+            CurrentUserName = device.DeviceAssignments
+                .FirstOrDefault(da => da.IsActive)?.User?.Name,
+            CurrentUserRole = device.DeviceAssignments
+                .FirstOrDefault(da => da.IsActive)?.User?.Role
+        });
     }
 
     public async Task<DeviceResponseDto> CreateAsync(DeviceCreateDto dto)

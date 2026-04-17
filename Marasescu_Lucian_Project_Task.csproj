@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -6,6 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <InternalsVisibleTo>Marasescu_Lucian_Project_Task.Tests</InternalsVisibleTo>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Marasescu_Lucian_Project_Task.IntegrationTests\**" />
+    <Content Remove="Marasescu_Lucian_Project_Task.IntegrationTests\**" />
+    <EmbeddedResource Remove="Marasescu_Lucian_Project_Task.IntegrationTests\**" />
+    <None Remove="Marasescu_Lucian_Project_Task.IntegrationTests\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />

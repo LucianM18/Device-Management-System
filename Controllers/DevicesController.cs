@@ -22,6 +22,13 @@ public class DevicesController : ControllerBase
         return Ok(devices);
     }
 
+    [HttpGet("with-current-user")]
+    public async Task<ActionResult<IEnumerable<DeviceListItemDto>>> GetAllWithCurrentUser()
+    {
+        var devices = await _deviceService.GetAllWithCurrentUserAsync();
+        return Ok(devices);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<DeviceResponseDto>> GetById(int id)
     {

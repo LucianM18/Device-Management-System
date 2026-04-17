@@ -12,5 +12,7 @@
         public int RamAmount { get; set; }
         public string? Description { get; set; }
 
+        public ICollection<DeviceAssignment> DeviceAssignments { get; set; } = new List<DeviceAssignment>();
+
     }
 }

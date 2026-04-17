@@ -14,6 +14,8 @@ namespace Marasescu_Lucian_Project_Task.Data;
 
     public DbSet<Device> Devices => Set<Device>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<DeviceAssignment> DeviceAssignments => Set<DeviceAssignment>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -66,6 +68,28 @@ namespace Marasescu_Lucian_Project_Task.Data;
             entity.Property(u => u.Location)
                 .HasMaxLength(100)
                 .IsRequired();
+        });
+
+        modelBuilder.Entity<DeviceAssignment>(entity =>
+        {
+            entity.ToTable("DeviceAssignments");
+            entity.HasKey(da => da.Id);
+
+            entity.Property(da => da.AssignedAt)
+                .IsRequired();
+
+            entity.Property(da => da.IsActive)
+                .IsRequired();
+
+            entity.HasOne(da => da.Device)
+                .WithMany(d => d.DeviceAssignments)
+                .HasForeignKey(da => da.DeviceId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(da => da.User)
+                .WithMany(u => u.DeviceAssignments)
+                .HasForeignKey(da => da.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 
