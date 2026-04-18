@@ -1,0 +1,62 @@
+<mat-card class="form-card">
+  <mat-card-header>
+    <mat-card-title>{{ title }}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div *ngIf="loading" class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <p *ngIf="error" class="error-message">{{ error }}</p>
+
+    <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="device-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Manufacturer</mat-label>
+        <input matInput formControlName="manufacturer" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Type</mat-label>
+        <input matInput formControlName="type" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Operating System</mat-label>
+        <input matInput formControlName="operatingSystem" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>OS Version</mat-label>
+        <input matInput formControlName="osVersion" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Processor</mat-label>
+        <input matInput formControlName="processor" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>RAM (GB)</mat-label>
+        <input matInput type="number" formControlName="ramAmount" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description"></textarea>
+      </mat-form-field>
+
+      <div class="actions">
+        <button mat-flat-button color="primary" type="submit" [disabled]="submitting">
+          {{ submitText }}
+        </button>
+        <button mat-button type="button" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

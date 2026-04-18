@@ -23,3 +23,14 @@ export interface DeviceDetail {
   ramAmount: number;
   description?: string | null;
 }
+
+export interface DeviceUpsertPayload {
+  name: string;
+  manufacturer: string;
+  type: string;
+  operatingSystem: string;
+  osVersion: string;
+  processor: string;
+  ramAmount: number;
+  description: string;
+}

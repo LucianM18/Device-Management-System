@@ -17,6 +17,7 @@ import { DeviceDetail } from '../../models/device.model';
 })
 export class DeviceDetailComponent implements OnInit {
   device: DeviceDetail | null = null;
+  deviceId: number | null = null;
   loading = true;
   error: string | null = null;
 
@@ -28,6 +29,7 @@ export class DeviceDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.deviceId = id;
     this.deviceService.getById(id).subscribe({
       next: (data) => {
         this.device = data;
@@ -42,5 +44,11 @@ export class DeviceDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/devices']);
+  }
+
+  navigateToUpdate(): void {
+    if (this.deviceId !== null) {
+      this.router.navigate(['/devices', this.deviceId, 'edit']);
+    }
   }
 }

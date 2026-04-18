@@ -52,16 +52,20 @@ public class DeviceService : IDeviceService
 
     public async Task<DeviceResponseDto> CreateAsync(DeviceCreateDto dto)
     {
+        var normalizedName = dto.Name.Trim();
+        if (await _repository.ExistsByNameAsync(normalizedName))
+            throw new InvalidOperationException("A device with this name already exists.");
+
         var device = new Device
         {
-            Name = dto.Name,
-            Manufacturer = dto.Manufacturer,
-            Type = dto.Type,
-            OperatingSystem = dto.OperatingSystem,
-            OsVersion = dto.OsVersion,
-            Processor = dto.Processor,
+            Name = normalizedName,
+            Manufacturer = dto.Manufacturer.Trim(),
+            Type = dto.Type.Trim(),
+            OperatingSystem = dto.OperatingSystem.Trim(),
+            OsVersion = dto.OsVersion.Trim(),
+            Processor = dto.Processor.Trim(),
             RamAmount = dto.RamAmount,
-            Description = dto.Description
+            Description = dto.Description.Trim()
         };
 
         var created = await _repository.CreateAsync(device);
@@ -74,14 +78,18 @@ public class DeviceService : IDeviceService
         if (existing is null)
             return null;
 
-        if (dto.Name is not null)            existing.Name = dto.Name;
-        if (dto.Manufacturer is not null)    existing.Manufacturer = dto.Manufacturer;
-        if (dto.Type is not null)            existing.Type = dto.Type;
-        if (dto.OperatingSystem is not null) existing.OperatingSystem = dto.OperatingSystem;
-        if (dto.OsVersion is not null)       existing.OsVersion = dto.OsVersion;
-        if (dto.Processor is not null)       existing.Processor = dto.Processor;
-        if (dto.RamAmount.HasValue)          existing.RamAmount = dto.RamAmount.Value;
-        if (dto.Description is not null)     existing.Description = dto.Description;
+        var normalizedName = dto.Name.Trim();
+        if (await _repository.ExistsByNameAsync(normalizedName, id))
+            throw new InvalidOperationException("A device with this name already exists.");
+
+        existing.Name = normalizedName;
+        existing.Manufacturer = dto.Manufacturer.Trim();
+        existing.Type = dto.Type.Trim();
+        existing.OperatingSystem = dto.OperatingSystem.Trim();
+        existing.OsVersion = dto.OsVersion.Trim();
+        existing.Processor = dto.Processor.Trim();
+        existing.RamAmount = dto.RamAmount;
+        existing.Description = dto.Description.Trim();
 
         await _repository.UpdateAsync(existing);
         return MapToResponseDto(existing);

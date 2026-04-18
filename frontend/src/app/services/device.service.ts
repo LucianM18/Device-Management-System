@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DeviceDetail, DeviceListItem } from '../models/device.model';
+import { DeviceDetail, DeviceListItem, DeviceUpsertPayload } from '../models/device.model';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceService {
@@ -15,5 +15,17 @@ export class DeviceService {
 
   getById(id: number): Observable<DeviceDetail> {
     return this.http.get<DeviceDetail>(`${this.baseUrl}/devices/${id}`);
+  }
+
+  create(payload: DeviceUpsertPayload): Observable<DeviceDetail> {
+    return this.http.post<DeviceDetail>(`${this.baseUrl}/devices`, payload);
+  }
+
+  update(id: number, payload: DeviceUpsertPayload): Observable<DeviceDetail> {
+    return this.http.put<DeviceDetail>(`${this.baseUrl}/devices/${id}`, payload);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/devices/${id}`);
   }
 }

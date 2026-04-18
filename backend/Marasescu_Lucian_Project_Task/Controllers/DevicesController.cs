@@ -42,18 +42,46 @@ public class DevicesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<DeviceResponseDto>> Create([FromBody] DeviceCreateDto dto)
     {
-        var created = await _deviceService.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        var payloadError = ValidateCreatePayload(dto);
+        if (payloadError is not null)
+            return BadRequest(new { message = payloadError });
+
+        try
+        {
+            var created = await _deviceService.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
-    [HttpPatch("{id}")]
+    [HttpPut("{id}")]
     public async Task<ActionResult<DeviceResponseDto>> Update(int id, [FromBody] DeviceUpdateDto dto)
     {
-        var updated = await _deviceService.UpdateAsync(id, dto);
-        if (updated is null)
-            return NotFound();
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
 
-        return Ok(updated);
+        var payloadError = ValidateUpdatePayload(dto);
+        if (payloadError is not null)
+            return BadRequest(new { message = payloadError });
+
+        try
+        {
+            var updated = await _deviceService.UpdateAsync(id, dto);
+            if (updated is null)
+                return NotFound();
+
+            return Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id}")]
@@ -64,5 +92,53 @@ public class DevicesController : ControllerBase
             return NotFound();
 
         return NoContent();
+    }
+
+    private static string? ValidateCreatePayload(DeviceCreateDto dto)
+    {
+        return ValidatePayload(
+            dto.Name,
+            dto.Manufacturer,
+            dto.Type,
+            dto.OperatingSystem,
+            dto.OsVersion,
+            dto.Processor,
+            dto.RamAmount,
+            dto.Description);
+    }
+
+    private static string? ValidateUpdatePayload(DeviceUpdateDto dto)
+    {
+        return ValidatePayload(
+            dto.Name,
+            dto.Manufacturer,
+            dto.Type,
+            dto.OperatingSystem,
+            dto.OsVersion,
+            dto.Processor,
+            dto.RamAmount,
+            dto.Description);
+    }
+
+    private static string? ValidatePayload(
+        string name,
+        string manufacturer,
+        string type,
+        string operatingSystem,
+        string osVersion,
+        string processor,
+        int ramAmount,
+        string description)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "Name is required.";
+        if (string.IsNullOrWhiteSpace(manufacturer)) return "Manufacturer is required.";
+        if (string.IsNullOrWhiteSpace(type)) return "Type is required.";
+        if (string.IsNullOrWhiteSpace(operatingSystem)) return "OperatingSystem is required.";
+        if (string.IsNullOrWhiteSpace(osVersion)) return "OsVersion is required.";
+        if (string.IsNullOrWhiteSpace(processor)) return "Processor is required.";
+        if (string.IsNullOrWhiteSpace(description)) return "Description is required.";
+        if (ramAmount is < 1 or > 128) return "RamAmount must be between 1 and 128.";
+
+        return null;
     }
 }

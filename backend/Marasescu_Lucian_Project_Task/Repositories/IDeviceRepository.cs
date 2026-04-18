@@ -5,4 +5,5 @@ namespace Marasescu_Lucian_Project_Task.Repositories;
 public interface IDeviceRepository : IRepository<Device>
 {
     Task<IEnumerable<Device>> GetAllWithCurrentUserAsync();
+    Task<bool> ExistsByNameAsync(string name, int? excludeId = null);
 }

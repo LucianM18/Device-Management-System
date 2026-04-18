@@ -68,7 +68,27 @@ public class DevicesControllerTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
-    public async Task UpdateDevice_ReturnsOkWithPartialUpdate()
+    public async Task CreateDevice_WithDuplicateName_ReturnsConflict()
+    {
+        var duplicate = new DeviceCreateDto
+        {
+            Name = "Seeded Laptop",
+            Manufacturer = "Dell",
+            Type = "Laptop",
+            OperatingSystem = "Windows",
+            OsVersion = "11",
+            Processor = "Intel Core i7",
+            RamAmount = 16,
+            Description = "Duplicate by name"
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/devices", duplicate);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateDevice_WithPut_ReturnsOkWithFullUpdate()
     {
         var allResponse = await _client.GetAsync("/api/devices");
         var allDevices = await allResponse.Content.ReadFromJsonAsync<List<DeviceResponseDto>>();
@@ -76,24 +96,59 @@ public class DevicesControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.NotEmpty(allDevices);
 
         var targetId = allDevices[0].Id;
-        var originalDevice = allDevices[0];
 
         var updateDto = new DeviceUpdateDto
         {
-            Name = "Updated Name Only"
+            Name = "Updated Full Device",
+            Manufacturer = "Lenovo",
+            Type = "Laptop",
+            OperatingSystem = "Windows",
+            OsVersion = "11 Pro",
+            Processor = "Intel Core i9",
+            RamAmount = 32,
+            Description = "Updated via PUT"
         };
 
-        var patchResponse = await _client.PatchAsJsonAsync($"/api/devices/{targetId}", updateDto);
+        var putResponse = await _client.PutAsJsonAsync($"/api/devices/{targetId}", updateDto);
 
-        Assert.Equal(HttpStatusCode.OK, patchResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
 
-        var updated = await patchResponse.Content.ReadFromJsonAsync<DeviceResponseDto>();
+        var updated = await putResponse.Content.ReadFromJsonAsync<DeviceResponseDto>();
         Assert.NotNull(updated);
-        Assert.Equal("Updated Name Only", updated.Name);
+        Assert.Equal(updateDto.Name, updated.Name);
+        Assert.Equal(updateDto.Manufacturer, updated.Manufacturer);
+        Assert.Equal(updateDto.Type, updated.Type);
+        Assert.Equal(updateDto.OperatingSystem, updated.OperatingSystem);
+        Assert.Equal(updateDto.OsVersion, updated.OsVersion);
+        Assert.Equal(updateDto.Processor, updated.Processor);
+        Assert.Equal(updateDto.RamAmount, updated.RamAmount);
+        Assert.Equal(updateDto.Description, updated.Description);
+    }
 
-        Assert.Equal(originalDevice.Manufacturer, updated.Manufacturer);
-        Assert.Equal(originalDevice.Processor, updated.Processor);
-        Assert.Equal(originalDevice.RamAmount, updated.RamAmount);
+    [Fact]
+    public async Task UpdateDevice_WithInvalidData_ReturnsBadRequest()
+    {
+        var allResponse = await _client.GetAsync("/api/devices");
+        var allDevices = await allResponse.Content.ReadFromJsonAsync<List<DeviceResponseDto>>();
+        Assert.NotNull(allDevices);
+        Assert.NotEmpty(allDevices);
+
+        var targetId = allDevices[0].Id;
+        var invalidUpdate = new
+        {
+            Name = "   ",
+            Manufacturer = "Lenovo",
+            Type = "Laptop",
+            OperatingSystem = "Windows",
+            OsVersion = "11",
+            Processor = "Intel",
+            RamAmount = 16,
+            Description = "Valid description"
+        };
+
+        var response = await _client.PutAsJsonAsync($"/api/devices/{targetId}", invalidUpdate);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
@@ -107,7 +162,8 @@ public class DevicesControllerTests : IClassFixture<CustomWebApplicationFactory>
             OperatingSystem = "Android",
             OsVersion = "13",
             Processor = "MediaTek",
-            RamAmount = 4
+            RamAmount = 4,
+            Description = "Delete test device"
         };
 
         var createResponse = await _client.PostAsJsonAsync("/api/devices", newDevice);

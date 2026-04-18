@@ -31,6 +31,7 @@ public class DeviceCreateDto
     [Range(1, 128)]
     public int RamAmount { get; set; }
 
+    [Required]
     [MaxLength(500)]
-    public string? Description { get; set; }
+    public string Description { get; set; } = null!;
 }

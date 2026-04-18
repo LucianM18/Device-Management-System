@@ -3,6 +3,14 @@
   margin: 32px auto;
 }
 
+.header-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .spinner-container {
   display: flex;
   justify-content: center;
@@ -20,4 +28,8 @@
 
 .device-item:hover {
   background-color: rgba(0, 0, 0, 0.04);
+}
+
+.delete-button {
+  min-width: 88px;
 }

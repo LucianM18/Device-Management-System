@@ -1,6 +1,9 @@
 <mat-card class="list-card">
   <mat-card-header>
-    <mat-card-title>Devices</mat-card-title>
+    <div class="header-row">
+      <mat-card-title>Devices</mat-card-title>
+      <button mat-flat-button color="primary" (click)="navigateToCreate()">Add Device</button>
+    </div>
   </mat-card-header>
   <mat-card-content>
     <div *ngIf="loading" class="spinner-container">
@@ -20,6 +23,16 @@
         <span matListItemLine>
           User: {{ device.currentUserName ?? 'Unassigned' }}
         </span>
+        <button
+          mat-stroked-button
+          color="warn"
+          matListItemMeta
+          class="delete-button"
+          (click)="deleteDevice($event, device)"
+          [disabled]="deletingDeviceIds.has(device.id)"
+        >
+          Delete
+        </button>
       </mat-list-item>
     </mat-nav-list>
   </mat-card-content>
