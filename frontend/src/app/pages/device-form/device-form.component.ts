@@ -32,13 +32,15 @@ export class DeviceFormComponent implements OnInit {
   deviceId: number | null = null;
   loading = false;
   submitting = false;
+  generatingDescription = false;
   error: string | null = null;
+  generateDescriptionError: string | null = null;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly deviceService: DeviceService
+    private readonly deviceService: DeviceService,
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -47,7 +49,10 @@ export class DeviceFormComponent implements OnInit {
       operatingSystem: ['', [Validators.required, Validators.maxLength(50)]],
       osVersion: ['', [Validators.required, Validators.maxLength(50)]],
       processor: ['', [Validators.required, Validators.maxLength(100)]],
-      ramAmount: [8, [Validators.required, Validators.min(1), Validators.max(128)]],
+      ramAmount: [
+        8,
+        [Validators.required, Validators.min(1), Validators.max(128)],
+      ],
       description: ['', [Validators.required, Validators.maxLength(500)]],
     });
   }
@@ -109,6 +114,34 @@ export class DeviceFormComponent implements OnInit {
         this.error = 'Failed to update device.';
       },
     });
+  }
+
+  generateDescription(): void {
+    const v = this.form.getRawValue();
+    this.generatingDescription = true;
+    this.generateDescriptionError = null;
+    this.deviceService
+      .generateDescription({
+        name: v.name ?? '',
+        manufacturer: v.manufacturer ?? '',
+        type: v.type ?? '',
+        operatingSystem: v.operatingSystem ?? '',
+        osVersion: v.osVersion ?? '',
+        processor: v.processor ?? '',
+        ramAmount: Number(v.ramAmount),
+      })
+      .subscribe({
+        next: (result) => {
+          this.form.patchValue({ description: result.description });
+          this.generatingDescription = false;
+        },
+        error: (err) => {
+          this.generateDescriptionError =
+            err?.error?.message ??
+            'Failed to generate description. Please try again.';
+          this.generatingDescription = false;
+        },
+      });
   }
 
   cancel(): void {

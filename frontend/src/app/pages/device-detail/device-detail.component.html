@@ -45,7 +45,7 @@
         </div>
         <div class="detail-row">
           <span class="label">Assigned To</span>
-          <span>{{ device.currentUserName ?? 'Unassigned' }}</span>
+          <span>{{ device.currentUserName ?? "Unassigned" }}</span>
         </div>
       </div>
 
@@ -53,19 +53,23 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-flat-button color="primary" (click)="navigateToUpdate()">Update Device</button>
+      <button mat-flat-button color="primary" (click)="navigateToUpdate()">
+        Update Device
+      </button>
       <button
         *ngIf="isUnassigned"
         mat-flat-button
         color="accent"
-        (click)="assign()">
+        (click)="assign()"
+      >
         Assign to Me
       </button>
       <button
         *ngIf="isAssignedToCurrentUser"
         mat-stroked-button
         color="warn"
-        (click)="unassign()">
+        (click)="unassign()"
+      >
         Unassign
       </button>
       <button mat-button (click)="goBack()">Back to Devices</button>

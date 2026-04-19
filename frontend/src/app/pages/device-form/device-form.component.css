@@ -32,6 +32,19 @@ mat-form-field {
   justify-content: flex-end;
 }
 
+.generate-description-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-spinner {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
 @media (max-width: 720px) {
   .device-form {
     grid-template-columns: 1fr;

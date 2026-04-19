@@ -12,7 +12,13 @@ import { DeviceDetail } from '../../models/device.model';
 @Component({
   selector: 'app-device-detail',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatProgressSpinnerModule, MatDividerModule, NgIf],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatDividerModule,
+    NgIf,
+  ],
   templateUrl: './device-detail.component.html',
   styleUrl: './device-detail.component.css',
 })
@@ -27,7 +33,7 @@ export class DeviceDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private deviceService: DeviceService,
-    public authService: AuthService
+    public authService: AuthService,
   ) {}
 
   ngOnInit(): void {

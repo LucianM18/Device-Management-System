@@ -13,11 +13,16 @@ public class DevicesController : ControllerBase
 {
     private readonly IDeviceService _deviceService;
     private readonly IDeviceAssignmentService _assignmentService;
+    private readonly IDescriptionGeneratorService _descriptionGeneratorService;
 
-    public DevicesController(IDeviceService deviceService, IDeviceAssignmentService assignmentService)
+    public DevicesController(
+        IDeviceService deviceService,
+        IDeviceAssignmentService assignmentService,
+        IDescriptionGeneratorService descriptionGeneratorService)
     {
         _deviceService = deviceService;
         _assignmentService = assignmentService;
+        _descriptionGeneratorService = descriptionGeneratorService;
     }
 
     [HttpGet]
@@ -97,6 +102,24 @@ public class DevicesController : ControllerBase
             return NotFound();
 
         return NoContent();
+    }
+
+    [HttpPost("generate-description")]
+    public async Task<IActionResult> GenerateDescription([FromBody] GenerateDescriptionRequestDto dto)
+    {
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
+
+        try
+        {
+            var description = await _descriptionGeneratorService.GenerateDescriptionAsync(
+                dto.Name, dto.Manufacturer, dto.Type, dto.OperatingSystem, dto.Processor, dto.RamAmount);
+            return Ok(new { description });
+        }
+        catch
+        {
+            return StatusCode(502, new { message = "Failed to generate description. Please try again." });
+        }
     }
 
     [HttpPost("{id}/assign")]

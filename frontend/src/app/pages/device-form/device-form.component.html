@@ -10,7 +10,12 @@
 
     <p *ngIf="error" class="error-message">{{ error }}</p>
 
-    <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="device-form">
+    <form
+      *ngIf="!loading"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      class="device-form"
+    >
       <mat-form-field appearance="outline">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name" />
@@ -51,8 +56,36 @@
         <textarea matInput rows="3" formControlName="description"></textarea>
       </mat-form-field>
 
+      <div class="generate-description-row">
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="generateDescription()"
+          [disabled]="generatingDescription"
+        >
+          <mat-spinner
+            *ngIf="generatingDescription"
+            diameter="18"
+            class="btn-spinner"
+          ></mat-spinner>
+          {{
+            generatingDescription
+              ? "Generating..."
+              : "Generate Description with AI"
+          }}
+        </button>
+        <span *ngIf="generateDescriptionError" class="error-message">{{
+          generateDescriptionError
+        }}</span>
+      </div>
+
       <div class="actions">
-        <button mat-flat-button color="primary" type="submit" [disabled]="submitting">
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="submitting"
+        >
           {{ submitText }}
         </button>
         <button mat-button type="button" (click)="cancel()">Cancel</button>
