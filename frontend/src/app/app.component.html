@@ -1,5 +1,11 @@
 <mat-toolbar color="primary">
   <span>{{ title }}</span>
+  <span class="spacer"></span>
+  <ng-container *ngIf="authService.currentUser$ | async as user">
+    <span class="user-name">{{ user.name }}</span>
+    <button mat-button (click)="logout()">Logout</button>
+  </ng-container>
 </mat-toolbar>
 
 <router-outlet />
+

@@ -1,18 +1,23 @@
+using System.Security.Claims;
 using Marasescu_Lucian_Project_Task.Dtos;
 using Marasescu_Lucian_Project_Task.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Marasescu_Lucian_Project_Task.Controllers;
 
 [ApiController]
 [Route("api/devices")]
+[Authorize]
 public class DevicesController : ControllerBase
 {
     private readonly IDeviceService _deviceService;
+    private readonly IDeviceAssignmentService _assignmentService;
 
-    public DevicesController(IDeviceService deviceService)
+    public DevicesController(IDeviceService deviceService, IDeviceAssignmentService assignmentService)
     {
         _deviceService = deviceService;
+        _assignmentService = assignmentService;
     }
 
     [HttpGet]
@@ -92,6 +97,50 @@ public class DevicesController : ControllerBase
             return NotFound();
 
         return NoContent();
+    }
+
+    [HttpPost("{id}/assign")]
+    public async Task<IActionResult> Assign(int id)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim is null)
+            return Unauthorized();
+
+        var userId = int.Parse(userIdClaim);
+
+        try
+        {
+            await _assignmentService.AssignDeviceAsync(id, userId);
+            return Ok();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("{id}/unassign")]
+    public async Task<IActionResult> Unassign(int id)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim is null)
+            return Unauthorized();
+
+        var userId = int.Parse(userIdClaim);
+
+        try
+        {
+            await _assignmentService.UnassignDeviceAsync(id, userId);
+            return Ok();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
     }
 
     private static string? ValidateCreatePayload(DeviceCreateDto dto)

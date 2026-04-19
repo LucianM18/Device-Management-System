@@ -17,7 +17,7 @@ public class DeviceService : IDeviceService
     public async Task<IEnumerable<DeviceResponseDto>> GetAllAsync()
     {
         var devices = await _repository.GetAllAsync();
-        return devices.Select(MapToResponseDto);
+        return devices.Select(d => MapToResponseDto(d));
     }
 
 
@@ -25,7 +25,10 @@ public class DeviceService : IDeviceService
     public async Task<DeviceResponseDto?> GetByIdAsync(int id)
     {
         var device = await _repository.GetByIdAsync(id);
-        return device is null ? null : MapToResponseDto(device);
+        if (device is null) return null;
+
+        var assignment = await _repository.GetActiveAssignmentAsync(id);
+        return MapToResponseDto(device, assignment);
     }
 
     public async Task<IEnumerable<DeviceListItemDto>> GetAllWithCurrentUserAsync()
@@ -100,7 +103,7 @@ public class DeviceService : IDeviceService
         return await _repository.DeleteAsync(id);
     }
 
-    private static DeviceResponseDto MapToResponseDto(Device device) => new()
+    private static DeviceResponseDto MapToResponseDto(Device device, Marasescu_Lucian_Project_Task.Entities.DeviceAssignment? assignment = null) => new()
     {
         Id = device.Id,
         Name = device.Name,
@@ -110,6 +113,8 @@ public class DeviceService : IDeviceService
         OsVersion = device.OsVersion,
         Processor = device.Processor,
         RamAmount = device.RamAmount,
-        Description = device.Description
+        Description = device.Description,
+        CurrentUserId = assignment?.UserId,
+        CurrentUserName = assignment?.User?.Name
     };
 }

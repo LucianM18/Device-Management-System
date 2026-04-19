@@ -26,6 +26,19 @@ public class DeviceRepository : Repository<Device>, IDeviceRepository
             (!excludeId.HasValue || d.Id != excludeId.Value) &&
             d.Name.ToLower() == normalizedName);
     }
+
+    public async Task<DeviceAssignment?> GetActiveAssignmentAsync(int deviceId)
+    {
+        return await _context.DeviceAssignments
+            .Include(da => da.User)
+            .FirstOrDefaultAsync(da => da.DeviceId == deviceId && da.IsActive);
+    }
+
+    public async Task<DeviceAssignment?> GetActiveAssignmentForUserAsync(int deviceId, int userId)
+    {
+        return await _context.DeviceAssignments
+            .FirstOrDefaultAsync(da => da.DeviceId == deviceId && da.UserId == userId && da.IsActive);
+    }
 }
 
 

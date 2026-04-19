@@ -68,6 +68,17 @@ namespace Marasescu_Lucian_Project_Task.Data;
             entity.Property(u => u.Location)
                 .HasMaxLength(100)
                 .IsRequired();
+
+            entity.Property(u => u.Email)
+                .HasMaxLength(256)
+                .IsRequired();
+
+            entity.Property(u => u.PasswordHash)
+                .HasMaxLength(512)
+                .IsRequired();
+
+            entity.HasIndex(u => u.Email)
+                .IsUnique();
         });
 
         modelBuilder.Entity<DeviceAssignment>(entity =>

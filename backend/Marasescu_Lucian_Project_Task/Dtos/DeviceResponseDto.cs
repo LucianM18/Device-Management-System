@@ -11,4 +11,6 @@ public class DeviceResponseDto
     public string Processor { get; set; } = null!;
     public int RamAmount { get; set; }
     public string? Description { get; set; }
+    public int? CurrentUserId { get; set; }
+    public string? CurrentUserName { get; set; }
 }

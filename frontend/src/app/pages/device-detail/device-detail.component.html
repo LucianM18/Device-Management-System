@@ -43,11 +43,31 @@
           <span class="label">Description</span>
           <span>{{ device.description }}</span>
         </div>
+        <div class="detail-row">
+          <span class="label">Assigned To</span>
+          <span>{{ device.currentUserName ?? 'Unassigned' }}</span>
+        </div>
       </div>
+
+      <p *ngIf="assignError" class="error-message">{{ assignError }}</p>
     </mat-card-content>
 
     <mat-card-actions>
       <button mat-flat-button color="primary" (click)="navigateToUpdate()">Update Device</button>
+      <button
+        *ngIf="isUnassigned"
+        mat-flat-button
+        color="accent"
+        (click)="assign()">
+        Assign to Me
+      </button>
+      <button
+        *ngIf="isAssignedToCurrentUser"
+        mat-stroked-button
+        color="warn"
+        (click)="unassign()">
+        Unassign
+      </button>
       <button mat-button (click)="goBack()">Back to Devices</button>
     </mat-card-actions>
   </mat-card>

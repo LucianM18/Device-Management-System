@@ -22,6 +22,8 @@ export interface DeviceDetail {
   processor: string;
   ramAmount: number;
   description?: string | null;
+  currentUserId?: number | null;
+  currentUserName?: string | null;
 }
 
 export interface DeviceUpsertPayload {
