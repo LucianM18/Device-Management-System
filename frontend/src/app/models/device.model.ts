@@ -36,3 +36,11 @@ export interface DeviceUpsertPayload {
   ramAmount: number;
   description: string;
 }
+
+export interface PaginatedResult<T> {
+  items: T[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}

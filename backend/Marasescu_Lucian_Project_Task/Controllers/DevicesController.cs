@@ -39,6 +39,19 @@ public class DevicesController : ControllerBase
         return Ok(devices);
     }
 
+    [HttpGet("search")]
+    public async Task<ActionResult<PaginatedResult<DeviceListItemDto>>> Search(
+        [FromQuery] string? q,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        if (page < 1) page = 1;
+        pageSize = Math.Clamp(pageSize, 1, 50);
+
+        var result = await _deviceService.SearchAsync(q, page, pageSize);
+        return Ok(result);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<DeviceResponseDto>> GetById(int id)
     {

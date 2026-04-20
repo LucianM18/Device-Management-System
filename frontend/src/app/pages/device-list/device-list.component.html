@@ -6,13 +6,24 @@
     </div>
   </mat-card-header>
   <mat-card-content>
+    <mat-form-field class="search-field" appearance="outline">
+      <mat-label>Search devices</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Name, manufacturer, processor, RAM..."
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
     <div *ngIf="loading" class="spinner-container">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
 
     <p *ngIf="error" class="error-message">{{ error }}</p>
 
-    <mat-nav-list *ngIf="!loading && !error">
+    <mat-nav-list *ngIf="!loading && !error && devices.length > 0">
       <mat-list-item
         *ngFor="let device of devices"
         (click)="navigateToDetail(device.id)"
@@ -35,5 +46,18 @@
         </button>
       </mat-list-item>
     </mat-nav-list>
+
+    <p *ngIf="!loading && !error && devices.length === 0" class="no-results-message">
+      No devices found<ng-container *ngIf="searchQuery"> for &ldquo;{{ searchQuery }}&rdquo;</ng-container>.
+    </p>
+
+    <mat-paginator
+      [length]="totalCount"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[5]"
+      (page)="onPageChange($event)"
+      [disabled]="loading"
+    ></mat-paginator>
   </mat-card-content>
 </mat-card>

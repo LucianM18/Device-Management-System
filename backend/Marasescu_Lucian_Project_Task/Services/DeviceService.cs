@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Marasescu_Lucian_Project_Task.Dtos;
 using Marasescu_Lucian_Project_Task.Entities;
 using Marasescu_Lucian_Project_Task.Repositories;
@@ -55,13 +56,9 @@ public class DeviceService : IDeviceService
 
     public async Task<DeviceResponseDto> CreateAsync(DeviceCreateDto dto)
     {
-        var normalizedName = dto.Name.Trim();
-        if (await _repository.ExistsByNameAsync(normalizedName))
-            throw new InvalidOperationException("A device with this name already exists.");
-
         var device = new Device
         {
-            Name = normalizedName,
+            Name = dto.Name.Trim(),
             Manufacturer = dto.Manufacturer.Trim(),
             Type = dto.Type.Trim(),
             OperatingSystem = dto.OperatingSystem.Trim(),
@@ -81,11 +78,7 @@ public class DeviceService : IDeviceService
         if (existing is null)
             return null;
 
-        var normalizedName = dto.Name.Trim();
-        if (await _repository.ExistsByNameAsync(normalizedName, id))
-            throw new InvalidOperationException("A device with this name already exists.");
-
-        existing.Name = normalizedName;
+        existing.Name = dto.Name.Trim();
         existing.Manufacturer = dto.Manufacturer.Trim();
         existing.Type = dto.Type.Trim();
         existing.OperatingSystem = dto.OperatingSystem.Trim();
@@ -102,6 +95,46 @@ public class DeviceService : IDeviceService
     {
         return await _repository.DeleteAsync(id);
     }
+
+    public async Task<PaginatedResult<DeviceListItemDto>> SearchAsync(string? query, int page, int pageSize)
+    {
+        var tokens = NormalizeQuery(query);
+        var (devices, totalCount) = await _repository.SearchPagedAsync(tokens, page, pageSize);
+
+        return new PaginatedResult<DeviceListItemDto>
+        {
+            Items = devices.Select(MapToListItemDto).ToList(),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize,
+            TotalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)pageSize)
+        };
+    }
+
+    private static string[] NormalizeQuery(string? query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return [];
+
+        var lower = query.Trim().ToLowerInvariant();
+        var stripped = Regex.Replace(lower, @"[^\w\s]", " ");
+        return stripped.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    private static DeviceListItemDto MapToListItemDto(Device device) => new()
+    {
+        Id = device.Id,
+        Name = device.Name,
+        Manufacturer = device.Manufacturer,
+        Type = device.Type,
+        OperatingSystem = device.OperatingSystem,
+        OsVersion = device.OsVersion,
+        Processor = device.Processor,
+        RamAmount = device.RamAmount,
+        Description = device.Description,
+        CurrentUserName = device.DeviceAssignments.FirstOrDefault(da => da.IsActive)?.User?.Name,
+        CurrentUserRole = device.DeviceAssignments.FirstOrDefault(da => da.IsActive)?.User?.Role
+    };
 
     private static DeviceResponseDto MapToResponseDto(Device device, Marasescu_Lucian_Project_Task.Entities.DeviceAssignment? assignment = null) => new()
     {

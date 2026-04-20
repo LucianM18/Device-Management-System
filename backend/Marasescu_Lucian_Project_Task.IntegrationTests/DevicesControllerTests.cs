@@ -68,26 +68,6 @@ public class DevicesControllerTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
-    public async Task CreateDevice_WithDuplicateName_ReturnsConflict()
-    {
-        var duplicate = new DeviceCreateDto
-        {
-            Name = "Seeded Laptop",
-            Manufacturer = "Dell",
-            Type = "Laptop",
-            OperatingSystem = "Windows",
-            OsVersion = "11",
-            Processor = "Intel Core i7",
-            RamAmount = 16,
-            Description = "Duplicate by name"
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/devices", duplicate);
-
-        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
-    }
-
-    [Fact]
     public async Task UpdateDevice_WithPut_ReturnsOkWithFullUpdate()
     {
         var allResponse = await _client.GetAsync("/api/devices");

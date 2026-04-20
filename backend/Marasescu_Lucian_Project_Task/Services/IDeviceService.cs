@@ -10,4 +10,5 @@ public interface IDeviceService
     Task<DeviceResponseDto> CreateAsync(DeviceCreateDto dto);
     Task<DeviceResponseDto?> UpdateAsync(int id, DeviceUpdateDto dto);
     Task<bool> DeleteAsync(int id);
+    Task<PaginatedResult<DeviceListItemDto>> SearchAsync(string? query, int page, int pageSize);
 }

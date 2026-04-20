@@ -5,6 +5,7 @@ import {
   DeviceDetail,
   DeviceListItem,
   DeviceUpsertPayload,
+  PaginatedResult,
 } from '../models/device.model';
 
 @Injectable({ providedIn: 'root' })
@@ -16,6 +17,21 @@ export class DeviceService {
   getAll(): Observable<DeviceListItem[]> {
     return this.http.get<DeviceListItem[]>(
       `${this.baseUrl}/devices/with-current-user`,
+    );
+  }
+
+  search(
+    query: string,
+    page: number,
+    pageSize: number,
+  ): Observable<PaginatedResult<DeviceListItem>> {
+    const params = new URLSearchParams({
+      q: query,
+      page: page.toString(),
+      pageSize: pageSize.toString(),
+    });
+    return this.http.get<PaginatedResult<DeviceListItem>>(
+      `${this.baseUrl}/devices/search?${params.toString()}`,
     );
   }
 
